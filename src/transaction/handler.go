@@ -82,7 +82,7 @@ func CreateTransaction(c *gin.Context) {
 	}
 
 	meta := gin.H{
-		"message": "Login Success!",
+		"message": "Data successfully retrieved/transmitted!",
 		"statusCode": http.StatusOK,
 	}
 
