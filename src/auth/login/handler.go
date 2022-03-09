@@ -23,7 +23,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func GenerateJWT(email string) (string, error) {
-	secretKey := os.Getenv("JWT_TOKEN")
+	secretKey := os.Getenv("JWT_SECRET")
 	var SECRET_KEY = []byte(secretKey)
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

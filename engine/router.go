@@ -36,7 +36,7 @@ func Router() *gin.Engine {
 }
 
 func AuthToken(c *gin.Context) {
-	secretKey := os.Getenv("JWT_TOKEN")
+	secretKey := os.Getenv("JWT_SECRET")
 	var SECRET_KEY = []byte(secretKey)
 	auth := c.Request.Header.Get("Authorization")
 	if auth == "" {
