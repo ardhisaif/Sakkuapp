@@ -4,6 +4,7 @@ import (
 	"MyApp/datastore/model"
 	"MyApp/engine"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -14,14 +15,14 @@ func main() {
 	if err != nil {
 		log.Println("Error loading .env file")
 	}
-	
-	db := model.SetupDB()
+	port := os.Getenv("PORT")
+	db := model.SetupDB() 
 	r := engine.Router()
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
 	})
-	if err := engine.Router().Run(":9000"); err != nil {
+	if err := engine.Router().Run(port); err != nil {
 		log.Fatal("Unable to start:", err)
 	}
-	r.Run(":9000")
+	r.Run(port)
 }
