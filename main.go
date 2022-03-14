@@ -16,6 +16,7 @@ func main() {
 		log.Println("Error loading .env file")
 	}
 	port := os.Getenv("PORT")
+	
 	db := model.SetupDB() 
 	r := engine.Router()
 	r.Use(func(c *gin.Context) {

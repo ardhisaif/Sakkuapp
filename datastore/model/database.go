@@ -22,5 +22,6 @@ func SetupDB() *gorm.DB {
 		fmt.Println("failed to connect database")
 		panic(err.Error())
 	}
+
 	return db
 }

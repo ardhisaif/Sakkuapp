@@ -2,7 +2,9 @@ package register
 
 import (
 	"MyApp/datastore/model"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -34,17 +36,29 @@ func Register(c *gin.Context) {
 		panic(result)
 	} 
 
+	fmt.Println(Register.ID)
+
+	Balance := model.Balance{
+		UserID: Register.ID,
+		Balance: 0.00,
+		CreatedAt: time.Now(),
+	}
+
+	if result := db.Create(&Balance); result.Error != nil {
+		panic(result)
+	} 
+
 	data := gin.H{
 		"id": Register.ID,
 		"name": Register.Name,
 		"email": Register.Email,
+		"balance": Balance.Balance,
 	}
 
 	meta := gin.H{
 		"message": "Register Success!",
 		"statusCode": http.StatusOK,
 	}
-
 
 	response := gin.H{
 		"data": data,

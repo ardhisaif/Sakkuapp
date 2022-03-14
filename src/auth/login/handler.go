@@ -9,6 +9,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -22,7 +23,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(email string, userID uuid.UUID) (string, error) {
 	secretKey := os.Getenv("JWT_SECRET")
 	var SECRET_KEY = []byte(secretKey)
 	token := jwt.New(jwt.SigningMethodHS256)
@@ -30,10 +31,10 @@ func GenerateJWT(email string) (string, error) {
 
 	claims["authorized"] = true
 	claims["email"] = email
+	claims["user_id"] = userID
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 
 	tokenString, err := token.SignedString(SECRET_KEY)
-	// fmt.Println(tokenString,token)
 	if err != nil {
 		fmt.Printf("Something Went Wrong: %s", err.Error())
 		return "", err
@@ -60,7 +61,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	validToken, err := GenerateJWT(user.Email)
+	validToken, err := GenerateJWT(user.Email, user.ID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "Failed to generate token")
 		return
