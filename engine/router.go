@@ -14,6 +14,10 @@ func Router() *gin.Engine {
 	r := gin.New()
 	r.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"data": "home page"})
+	})
+
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register", register.Register)
