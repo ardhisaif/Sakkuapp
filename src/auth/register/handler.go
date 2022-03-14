@@ -11,8 +11,8 @@ import (
 )
 
 func HashPassword(password string) (string, error) {
-    bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-    return string(bytes), err
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
 }
 
 func Register(c *gin.Context) {
@@ -22,7 +22,7 @@ func Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	hashPassword, _ := HashPassword(input.Password)
 
 	Register := model.User{
@@ -34,29 +34,29 @@ func Register(c *gin.Context) {
 	db := model.SetupDB()
 	if result := db.Create(&Register); result.Error != nil {
 		panic(result)
-	} 
+	}
 
 	fmt.Println(Register.ID)
 
 	Balance := model.Balance{
-		UserID: Register.ID,
-		Balance: 0.00,
+		UserID:    Register.ID,
+		Balance:   0.00,
 		CreatedAt: time.Now(),
 	}
 
 	if result := db.Create(&Balance); result.Error != nil {
 		panic(result)
-	} 
+	}
 
 	data := gin.H{
-		"id": Register.ID,
-		"name": Register.Name,
-		"email": Register.Email,
+		"id":      Register.ID,
+		"name":    Register.Name,
+		"email":   Register.Email,
 		"balance": Balance.Balance,
 	}
 
 	meta := gin.H{
-		"message": "Register Success!",
+		"message":    "Register Success!",
 		"statusCode": http.StatusOK,
 	}
 
@@ -64,7 +64,7 @@ func Register(c *gin.Context) {
 		"data": data,
 		"meta": meta,
 	}
-	
+
 	c.JSON(http.StatusOK, response)
-	
+
 }
