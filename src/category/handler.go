@@ -3,17 +3,17 @@ package category
 import (
 	"MyApp/datastore/model"
 	"MyApp/helper"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetListCategory(c *gin.Context) {
+	userID := helper.Authorization(c)
 	var category []model.Category
 	db := model.SetupDB()
 
-	db.Find(&category)
+	db.Where("user_id = ?", userID).Find(&category)
 
 	meta := gin.H{
 		"message":    "Data successfully retrieved/transmitted!",
@@ -25,7 +25,6 @@ func GetListCategory(c *gin.Context) {
 
 func CreateCategory(c *gin.Context) {
 	userID := helper.Authorization(c)
-	fmt.Println(userID, "userID..............")
 
 	var input InputUser
 
@@ -37,8 +36,9 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	category := model.Category{
+		UserID:   userID,
 		Category: input.Category,
-		Type: input.Type,
+		Type:     input.Type,
 	}
 
 	if result := db.Create(&category); result.Error != nil {
@@ -46,9 +46,10 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	data := gin.H{
-		"id": category.ID,
+		"id":       category.ID,
 		"category": category.Category,
-		"type": category.Type,
+		"type":     category.Type,
+		"total": category.Total,
 	}
 
 	meta := gin.H{

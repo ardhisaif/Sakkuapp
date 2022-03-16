@@ -5,6 +5,7 @@ import (
 	"MyApp/src/auth/register"
 	Transaction "MyApp/src/transaction"
 	Category "MyApp/src/category"
+	Statistic "MyApp/src/statistic"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -14,9 +15,13 @@ func Router() *gin.Engine {
 	r := gin.New()
 	r.Use(sessions.Sessions("mysession", sessions.NewCookieStore([]byte("secret"))))
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"data": "home page"})
+	r.GET("/", func(c *gin.Context){
+		c.JSON(200, gin.H{
+			"data": "masuk",
+		})
 	})
+
+	r.GET("/statistic", Statistic.Statistic)
 
 	auth := r.Group("/auth")
 	{

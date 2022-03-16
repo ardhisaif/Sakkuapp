@@ -77,14 +77,15 @@ func CreateTransaction(c *gin.Context) {
 	var category model.Category
 
 	tx.Where("user_id = ?", userID).First(&balances)
-	fmt.Println("input category", input.CategoryID)
-	db.First(&category, "id = ?", input.CategoryID)
-	fmt.Println(category.Category, category.Type, "category")
+	
+	tx.First(&category, "id = ?", input.CategoryID)
 
 	balances.Balance += income - expense
 	balances.UpdatedAt = time.Now()
+	category.Total += income - expense
 
 	tx.Save(&balances)
+	tx.Save(&category)
 
 	// row := db.Table("transactions").Select("sum(income - expense)").Row()
 	// row.Scan(&balance)
@@ -113,5 +114,4 @@ func CreateTransaction(c *gin.Context) {
 	tx.Commit()
 
 	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
-	// balance = 0.00
 }

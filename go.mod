@@ -4,6 +4,8 @@ go 1.17
 
 require github.com/gin-gonic/gin v1.7.7
 
+require github.com/go-redis/redis/v7 v7.4.1 // indirect
+
 require (
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff // indirect
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect

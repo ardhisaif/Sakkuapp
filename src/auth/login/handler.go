@@ -47,23 +47,23 @@ func Login(c *gin.Context) {
 	var user model.User
 	var input InputUser
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		return
 	}
 
 	if err := db.Where("email = ?", input.Email).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Record not found!"})
 		return
 	}
 
 	if isValidPassword := CheckPasswordHash(input.Password, user.Password); !isValidPassword {
-		fmt.Println("wrong password")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Password"})
 		return
 	}
 
 	validToken, err := GenerateJWT(user.Email, user.ID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "Failed to generate token")
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 

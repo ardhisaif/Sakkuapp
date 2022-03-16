@@ -42,11 +42,11 @@ func Authorization(c *gin.Context) string {
 		fmt.Println(claims, email, "claims")
 	} else {
 		fmt.Println(err, "error")
-		c.JSON(http.StatusBadGateway, err)
+		c.JSON(http.StatusUnauthorized, err)
 	}
 
 	if !token.Valid {
-		c.JSON(http.StatusInternalServerError, "token invalid")
+		c.JSON(http.StatusUnauthorized, "token invalid")
 	}
 
 	return userID
