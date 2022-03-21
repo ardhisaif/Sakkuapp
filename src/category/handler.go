@@ -91,11 +91,11 @@ func GetCategoryByID(c *gin.Context){
 		return
 	}
 
-	data := model.Category{
-		ID: category.ID,
-		Category: category.Category,
-		Type: category.Type,
-		Total: category.Total,
+	data := gin.H{
+		"id":       categoryID,
+		"category": category.Category,
+		"type":     category.Type,
+		"total":    category.Total,
 	}
 
 	meta := gin.H{

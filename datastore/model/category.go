@@ -10,7 +10,6 @@ import (
 type Category struct {
 	ID          uuid.UUID `json:"id" gorm:"primary_key"`
 	UserID      string    `json:"user_id" gorm:"ForeignKey:user_id"`
-	Transaction []Transaction
 	Category    string    `json:"category"`
 	Type        int8      `json:"type"`
 	Total       float64   `json:"total"`
