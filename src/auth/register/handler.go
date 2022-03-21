@@ -33,7 +33,8 @@ func Register(c *gin.Context) {
 
 	db := model.SetupDB()
 	if result := db.Create(&Register); result.Error != nil {
-		panic(result)
+		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": result.Error})
+		return
 	}
 
 	fmt.Println(Register.ID)
@@ -84,6 +85,7 @@ func Register(c *gin.Context) {
 
 	if result := db.Create(&category); result.Error != nil {
 		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": result.Error})
+		return
 	}
 
 	data := gin.H{
@@ -105,5 +107,4 @@ func Register(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
-
 }
