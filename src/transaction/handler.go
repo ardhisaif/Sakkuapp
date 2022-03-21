@@ -3,7 +3,6 @@ package transaction
 import (
 	"MyApp/datastore/model"
 	"MyApp/helper"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -41,9 +40,10 @@ func GetListTransaction(c *gin.Context) {
 func CreateTransaction(c *gin.Context) {
 
 	userID := helper.Authorization(c)
-	fmt.Println(userID, "userID..............")
 
 	var input InputUser
+	var balances model.Balance
+	var category model.Category
 
 	db := model.SetupDB()
 	tx := db.Begin()
@@ -53,10 +53,14 @@ func CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	if input.Type == 1 {
+	tx.First(&category, "id = ?", input.CategoryID)
+
+	if category.Type == 1 {
 		expense = 0.00
 		income = input.Price
-	} else if input.Type == 0 {
+	}
+
+	if category.Type == 0 {
 		income = 0.00
 		expense = input.Price
 	}
@@ -73,12 +77,7 @@ func CreateTransaction(c *gin.Context) {
 		panic(result)
 	}
 
-	var balances model.Balance
-	var category model.Category
-
 	tx.Where("user_id = ?", userID).First(&balances)
-	
-	tx.First(&category, "id = ?", input.CategoryID)
 
 	balances.Balance += income - expense
 	balances.UpdatedAt = time.Now()
@@ -86,9 +85,6 @@ func CreateTransaction(c *gin.Context) {
 
 	tx.Save(&balances)
 	tx.Save(&category)
-
-	// row := db.Table("transactions").Select("sum(income - expense)").Row()
-	// row.Scan(&balance)
 
 	response := Response{
 		Description: input.Description,

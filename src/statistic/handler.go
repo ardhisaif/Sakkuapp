@@ -14,20 +14,20 @@ func Statistic(c *gin.Context) {
 
 	db := model.SetupDB()
 
-	db.Where("user_id = ? AND type = ?", userID, 1).Find(&category)
+	db.Where("user_id = ? AND type = ? ", userID, 0).Find(&category)
 
-	income := category
-
-	db.Where("user_id = ? AND type = ?", userID, 0).Find(&category)
-
-	expense := category
+	var totalExpense float64 
+	for _, e := range category {
+		totalExpense += e.Total
+	}
+	totalExpense = totalExpense * -1
 
 	db.Where("user_id = ?", userID).First(&balance)
 
 	response := gin.H{
 		"balance": balance.Balance,
-		"income":  income,
-		"expense": expense,
+		"totalExpense": totalExpense,
+		"expense": category,
 	}
 
 	c.JSON(200, gin.H{"data": response})

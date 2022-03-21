@@ -3,25 +3,11 @@ package category
 import (
 	"MyApp/datastore/model"
 	"MyApp/helper"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-func GetListCategory(c *gin.Context) {
-	userID := helper.Authorization(c)
-	var category []model.Category
-	db := model.SetupDB()
-
-	db.Where("user_id = ?", userID).Find(&category)
-
-	meta := gin.H{
-		"message":    "Data successfully retrieved/transmitted!",
-		"statusCode": http.StatusOK,
-	}
-
-	c.JSON(http.StatusOK, gin.H{"data": category, "meta": meta})
-}
 
 func CreateCategory(c *gin.Context) {
 	userID := helper.Authorization(c)
@@ -49,11 +35,105 @@ func CreateCategory(c *gin.Context) {
 		"id":       category.ID,
 		"category": category.Category,
 		"type":     category.Type,
-		"total": category.Total,
+		"total":    category.Total,
 	}
 
 	meta := gin.H{
 		"message":    "Data successfully retrieved/transmitted!",
+		"statusCode": http.StatusOK,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+
+}
+
+func GetListCategory(c *gin.Context) {
+	userID := helper.Authorization(c)
+	var category []model.Category
+	db := model.SetupDB()
+
+	db.Where("user_id = ?", userID).Find(&category)
+
+	var data []interface{}
+
+	for _, v := range category {
+		response := gin.H{
+			"id":       v.ID,
+			"category": v.Category,
+			"type":     v.Type,
+			"total":    v.Total,
+		}
+
+		data = append(data, response)
+		fmt.Println(data)
+	}
+
+	meta := gin.H{
+		"message":    "Data successfully retrieved/transmitted!",
+		"statusCode": http.StatusOK,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+}
+
+func UpdateCategory(c *gin.Context) {
+	db := model.SetupDB()
+	userID := helper.Authorization(c)
+	var category model.Category
+	categoryID := c.Param("id")
+
+	db.Where("id = ? AND user_id = ?", categoryID, userID).First(&category)
+
+	var input InputUser
+
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	category.Category = input.Category
+	category.Type = input.Type
+
+	if result := db.Save(&category); result.Error != nil {
+		panic(result)
+	}
+
+	data := gin.H{
+		"id":       category.ID,
+		"category": category.Category,
+		"type":     category.Type,
+		"total":    category.Total,
+	}
+
+	meta := gin.H{
+		"message":    "Data successfully retrieved/transmitted!",
+		"statusCode": http.StatusOK,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+
+}
+
+func DeleteCategory(c *gin.Context) {
+	db := model.SetupDB()
+	userID := helper.Authorization(c)
+	var category model.Category
+	categoryID := c.Param("id")
+
+	db.Where("id = ? AND user_id = ?", categoryID, userID).First(&category)
+
+	if result := db.Delete(&category); result.Error != nil {
+		panic(result)
+	}
+
+	data := gin.H{
+		"id":       category.ID,
+		"category": category.Category,
+	}
+
+	meta := gin.H{
+		"message":    "Data successfully deleted",
 		"statusCode": http.StatusOK,
 	}
 

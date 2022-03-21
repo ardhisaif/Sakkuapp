@@ -6,6 +6,8 @@ import (
 	Transaction "MyApp/src/transaction"
 	Category "MyApp/src/category"
 	Statistic "MyApp/src/statistic"
+	PlannedPayment "MyApp/src/plannedPayment"
+	RecurringPayment "MyApp/src/recurringPayment"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -39,6 +41,20 @@ func Router() *gin.Engine {
 	{
 		category.POST("/", Category.CreateCategory)
 		category.GET("/", Category.GetListCategory)
+		category.PUT("/:id", Category.UpdateCategory)
+		category.DELETE("/:id", Category.DeleteCategory)
+	}
+
+	plannedPayment := r.Group("/planned-payment")
+	{
+		plannedPayment.POST("/", PlannedPayment.CreatePlannedPayment)
+		plannedPayment.POST("/:id", PlannedPayment.CreatePlannedPaymentByID)
+		plannedPayment.GET("/", PlannedPayment.GetListPlannedPayment)
+	}
+
+	recurringPayment := r.Group("/recurring-payment")
+	{
+		recurringPayment.POST("/:id", RecurringPayment.Recurringpayment)
 	}
 
 	return r
