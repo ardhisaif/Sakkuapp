@@ -62,6 +62,7 @@ func GetListCategory(c *gin.Context) {
 
 	if err := db.Where("user_id = ?", userID).Find(&category).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
+		return
 	}
 
 	for _, v := range category {
@@ -74,6 +75,32 @@ func GetListCategory(c *gin.Context) {
 
 		data = append(data, response)
 		fmt.Println(data)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
+}
+
+func GetCategoryByID(c *gin.Context){
+	userID := helper.Authorization(c)
+	categoryID := c.Param("id")
+	var category model.Category
+	db := model.SetupDB()
+
+	if err := db.Where("user_id = ? AND id = ?", userID, categoryID).Find(&category).Error; err != nil {
+		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": err})
+		return
+	}
+
+	data := model.Category{
+		ID: category.ID,
+		Category: category.Category,
+		Type: category.Type,
+		Total: category.Total,
+	}
+
+	meta := gin.H{
+		"message":    "Data successfully retrieved/transmitted!",
+		"statusCode": http.StatusOK,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})

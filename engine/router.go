@@ -42,6 +42,7 @@ func Router() *gin.Engine {
 	{
 		category.POST("/", Category.CreateCategory)
 		category.GET("/", Category.GetListCategory)
+		category.GET("/:id", Category.GetCategoryByID)
 		category.PUT("/:id", Category.UpdateCategory)
 		category.DELETE("/:id", Category.DeleteCategory)
 	}
