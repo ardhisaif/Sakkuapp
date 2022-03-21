@@ -109,5 +109,5 @@ func CreateTransaction(c *gin.Context) {
 
 	tx.Commit()
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 }

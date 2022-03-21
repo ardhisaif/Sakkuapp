@@ -84,6 +84,7 @@ func Login(c *gin.Context) {
 	}
 
 	response := gin.H{
+		"version": "v1",
 		"data": data,
 		"meta": meta,
 	}

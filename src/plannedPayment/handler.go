@@ -20,7 +20,7 @@ func GetListPlannedPayment(c *gin.Context) {
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": plannedPayment, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": plannedPayment, "meta": meta})
 }
 
 func CreatePlannedPayment(c *gin.Context) {
@@ -64,8 +64,9 @@ func CreatePlannedPayment(c *gin.Context) {
 
 	tx.Commit()
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 }
+
 func CreatePlannedPaymentByID(c *gin.Context) {
 	userID := helper.Authorization(c)
 
@@ -112,5 +113,5 @@ func CreatePlannedPaymentByID(c *gin.Context) {
 
 	tx.Commit()
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 }

@@ -43,7 +43,7 @@ func CreateCategory(c *gin.Context) {
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 
 }
 
@@ -73,7 +73,7 @@ func GetListCategory(c *gin.Context) {
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 }
 
 func UpdateCategory(c *gin.Context) {
@@ -111,7 +111,7 @@ func UpdateCategory(c *gin.Context) {
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 
 }
 
@@ -137,6 +137,6 @@ func DeleteCategory(c *gin.Context) {
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
 
 }

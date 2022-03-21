@@ -19,6 +19,7 @@ func Router() *gin.Engine {
 
 	r.GET("/", func(c *gin.Context){
 		c.JSON(200, gin.H{
+			"version": "v1",
 			"data": "masuk",
 		})
 	})
