@@ -45,7 +45,45 @@ func Register(c *gin.Context) {
 	}
 
 	if result := db.Create(&Balance); result.Error != nil {
-		panic(result)
+		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": result.Error})
+		return
+	}
+
+	category := []model.Category{
+		{
+			UserID:   Register.ID.String(),
+			Category: "food",
+			Type:     0,
+		},
+		{
+			UserID:   Register.ID.String(),
+			Category: "transportation",
+			Type:     0,
+		},
+		{
+			UserID:   Register.ID.String(),
+			Category: "salary",
+			Type:     1,
+		},
+		{
+			UserID:   Register.ID.String(),
+			Category: "charity, infaq, shodaqoh",
+			Type:     0,
+		},
+		{
+			UserID:   Register.ID.String(),
+			Category: "sale",
+			Type:     1,
+		},
+		{
+			UserID:   Register.ID.String(),
+			Category: "clothes",
+			Type:     0,
+		},
+	}
+
+	if result := db.Create(&category); result.Error != nil {
+		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": result.Error})
 	}
 
 	data := gin.H{
@@ -62,8 +100,8 @@ func Register(c *gin.Context) {
 
 	response := gin.H{
 		"version": "v1",
-		"data": data,
-		"meta": meta,
+		"data":    data,
+		"meta":    meta,
 	}
 
 	c.JSON(http.StatusOK, response)
