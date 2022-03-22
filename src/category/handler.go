@@ -66,21 +66,32 @@ func GetListCategory(c *gin.Context) {
 		return
 	}
 
+	if err := db.First(&balance, "user_id = ?", userID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": err.Error()})
+		return
+	}
+
 	for _, v := range category {
+		var statistic float64
+		Type := ""
+		if v.Type == 0 {
+			Type += "expense"
+			statistic += v.Total / balance.Expense * 100 * -1
+		}else{
+			Type += "income"
+			statistic += v.Total / balance.Expense * 100 
+		}
+
 		response := gin.H{
 			"id":       v.ID,
 			"category": v.Category,
-			"type":     v.Type,
+			"type":     Type,
 			"total":    v.Total,
+			"statistic(%)": statistic,
 		}
 
 		data = append(data, response)
 		fmt.Println(data)
-	}
-
-	if err := db.First(&balance, "user_id = ?", userID).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": err.Error()})
-		return
 	}
 
 	response := gin.H{

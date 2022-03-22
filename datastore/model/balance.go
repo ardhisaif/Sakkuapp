@@ -11,6 +11,7 @@ type Balance struct {
 	ID        uuid.UUID `json:"id" gorm:"primary_key"`
 	UserID    uuid.UUID `json:"user_id" gorm:"ForeignKey:user_id"`
 	Balance   float64   `json:"balance"`
+	Expense   float64   `json:"expense"`
 	UpdatedAt time.Time `json:"updated_at"`
 	CreatedAt time.Time `json:"created_at"`
 }

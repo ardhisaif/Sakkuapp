@@ -3,7 +3,6 @@ package transaction
 import (
 	"MyApp/datastore/model"
 	"MyApp/helper"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -12,8 +11,6 @@ import (
 
 var income float64
 var expense float64
-
-// var balance float64
 
 type Response struct {
 	Description string  `json:"description"`
@@ -27,7 +24,7 @@ func GetListTransaction(c *gin.Context) {
 	userID := helper.Authorization(c)
 	var transactions []model.Transaction
 	var balance model.Balance
-	
+
 	var category model.Category
 	db := model.SetupDB()
 
@@ -36,22 +33,19 @@ func GetListTransaction(c *gin.Context) {
 	db.Where("user_id = ?", userID).Find(&transactions)
 
 	for _, v := range transactions {
-		if err := db.First(&category, "id = ?", v.CategoryID).Error ; err != nil {
+		if err := db.Find(&category, "id = ?", v.CategoryID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
-		} 
+		}
 
 		response := gin.H{
-			"id":       v.ID,
-			"category": category.Category,
-			"type":     category.Type,
+			"id":          v.ID,
+			"category":    category.Category,
 			"description": v.Description,
-			"income": v.Income,
-			"expense": v.Expense,
+			"nominal":      v.Income - v.Expense,
 		}
 
 		data = append(data, response)
-		fmt.Println(data)
 	}
 
 	if err := db.First(&balance, "user_id = ?", userID).Error; err != nil {
@@ -60,7 +54,7 @@ func GetListTransaction(c *gin.Context) {
 	}
 
 	response := gin.H{
-		"balance": balance.Balance,
+		"balance":     balance.Balance,
 		"transaction": data,
 	}
 
@@ -115,6 +109,7 @@ func CreateTransaction(c *gin.Context) {
 	tx.Where("user_id = ?", userID).First(&balances)
 
 	balances.Balance += income - expense
+	balances.Expense += expense
 	balances.UpdatedAt = time.Now()
 	category.Total += income - expense
 
