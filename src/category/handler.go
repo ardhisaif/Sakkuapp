@@ -51,6 +51,7 @@ func CreateCategory(c *gin.Context) {
 func GetListCategory(c *gin.Context) {
 	userID := helper.Authorization(c)
 	var category []model.Category
+	var balance model.Balance
 	db := model.SetupDB()
 
 	var data []interface{}
@@ -61,7 +62,7 @@ func GetListCategory(c *gin.Context) {
 	}
 
 	if err := db.Where("user_id = ?", userID).Find(&category).Error; err != nil {
-		c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "data": data, "meta": meta})
 		return
 	}
 
@@ -77,7 +78,17 @@ func GetListCategory(c *gin.Context) {
 		fmt.Println(data)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": data, "meta": meta})
+	if err := db.First(&balance, userID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "data": data, "meta": meta})
+		return
+	}
+
+	response := gin.H{
+		"balance": balance,
+		"category": data,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"version": "v1", "data": response, "meta": meta})
 }
 
 func GetCategoryByID(c *gin.Context){

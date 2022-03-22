@@ -27,6 +27,7 @@ func GetListTransaction(c *gin.Context) {
 	userID := helper.Authorization(c)
 	var transactions []model.Transaction
 	var category model.Category
+	var balance model.Balance
 	db := model.SetupDB()
 
 	var data []interface{}
@@ -53,13 +54,22 @@ func GetListTransaction(c *gin.Context) {
 		fmt.Println(data)
 	}
 
+	if err := db.First(&balance, userID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": err.Error()})
+		return
+	}
+
+	response := gin.H{
+		"balance": balance,
+		"transaction": data,
+	}
 
 	meta := gin.H{
 		"message":    "Data successfully retrieved/transmitted!",
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"data": response, "meta": meta})
 }
 
 func CreateTransaction(c *gin.Context) {
