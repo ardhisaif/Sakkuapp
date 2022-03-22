@@ -84,7 +84,7 @@ func Register(c *gin.Context) {
 	}
 
 	if result := db.Create(&category); result.Error != nil {
-		c.JSON(http.StatusOK, gin.H{"version": "v1", "message": result.Error})
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": result.Error})
 		return
 	}
 
