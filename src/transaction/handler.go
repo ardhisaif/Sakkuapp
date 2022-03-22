@@ -25,7 +25,6 @@ func GetListTransaction(c *gin.Context) {
 	var transactions []model.Transaction
 	var balance model.Balance
 
-	var category model.Category
 	db := model.SetupDB()
 
 	var data []interface{}
@@ -33,6 +32,8 @@ func GetListTransaction(c *gin.Context) {
 	db.Where("user_id = ?", userID).Find(&transactions)
 
 	for _, v := range transactions {
+		var category model.Category
+		
 		if err := db.Find(&category, "id = ?", v.CategoryID).Error; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
