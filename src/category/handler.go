@@ -78,13 +78,13 @@ func GetListCategory(c *gin.Context) {
 		fmt.Println(data)
 	}
 
-	if err := db.First(&balance, userID).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "data": data, "meta": meta})
+	if err := db.First(&balance, "user_id = ?", userID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": err.Error()})
 		return
 	}
 
 	response := gin.H{
-		"balance": balance,
+		"balance": balance.Balance,
 		"category": data,
 	}
 

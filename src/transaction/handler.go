@@ -26,8 +26,9 @@ type Response struct {
 func GetListTransaction(c *gin.Context) {
 	userID := helper.Authorization(c)
 	var transactions []model.Transaction
-	var category model.Category
 	var balance model.Balance
+	
+	var category model.Category
 	db := model.SetupDB()
 
 	var data []interface{}
@@ -37,8 +38,8 @@ func GetListTransaction(c *gin.Context) {
 	} 
 
 	for _, v := range transactions {
-		if err := db.First(&category, v.CategoryID).Error ; err != nil {
-			c.JSON(http.StatusOK, gin.H{"message": err.Error()})
+		if err := db.First(&category, "id = ?", v.CategoryID).Error ; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		} 
 
 		response := gin.H{
@@ -54,13 +55,13 @@ func GetListTransaction(c *gin.Context) {
 		fmt.Println(data)
 	}
 
-	if err := db.First(&balance, userID).Error; err != nil {
+	if err := db.First(&balance, "user_id = ?", userID).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"version": "v1", "message": err.Error()})
 		return
 	}
 
 	response := gin.H{
-		"balance": balance,
+		"balance": balance.Balance,
 		"transaction": data,
 	}
 
