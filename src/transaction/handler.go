@@ -3,6 +3,7 @@ package transaction
 import (
 	"MyApp/datastore/model"
 	"MyApp/helper"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -25,16 +26,40 @@ type Response struct {
 func GetListTransaction(c *gin.Context) {
 	userID := helper.Authorization(c)
 	var transactions []model.Transaction
+	var category model.Category
 	db := model.SetupDB()
 
-	db.Where("user_id = ?", userID).Find(&transactions)
+	var data []interface{}
+
+	if err := db.Where("user_id = ?", userID).Find(&transactions).Error ; err != nil {
+		c.JSON(http.StatusOK, gin.H{"message": err.Error()})
+	} 
+
+	for _, v := range transactions {
+		if err := db.First(&category, v.CategoryID).Error ; err != nil {
+			c.JSON(http.StatusOK, gin.H{"message": err.Error()})
+		} 
+
+		response := gin.H{
+			"id":       v.ID,
+			"category": category.Category,
+			"type":     category.Type,
+			"description": v.Description,
+			"income": v.Income,
+			"expense": v.Expense,
+		}
+
+		data = append(data, response)
+		fmt.Println(data)
+	}
+
 
 	meta := gin.H{
 		"message":    "Data successfully retrieved/transmitted!",
 		"statusCode": http.StatusOK,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": transactions, "meta": meta})
+	c.JSON(http.StatusOK, gin.H{"data": data, "meta": meta})
 }
 
 func CreateTransaction(c *gin.Context) {
