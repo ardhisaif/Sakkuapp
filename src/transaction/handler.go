@@ -33,13 +33,12 @@ func GetListTransaction(c *gin.Context) {
 
 	var data []interface{}
 
-	if err := db.Where("user_id = ?", userID).Find(&transactions).Error ; err != nil {
-		c.JSON(http.StatusOK, gin.H{"message": err.Error()})
-	} 
+	db.Where("user_id = ?", userID).Find(&transactions)
 
 	for _, v := range transactions {
 		if err := db.First(&category, "id = ?", v.CategoryID).Error ; err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+			return
 		} 
 
 		response := gin.H{
