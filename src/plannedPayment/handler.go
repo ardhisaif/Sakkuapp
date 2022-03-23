@@ -44,8 +44,9 @@ func CreatePlannedPayment(c *gin.Context) {
 		Price:       input.Price,
 	}
 
-	if result := tx.Create(&plannedPayment); result.Error != nil {
-		panic(result)
+	if err := tx.Create(&plannedPayment).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	tx.First(&category, "id = ?", input.CategoryID)

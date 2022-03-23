@@ -72,14 +72,11 @@ func GetListCategory(c *gin.Context) {
 	}
 
 	for _, v := range category {
-		var statistic float64
 		Type := ""
 		if v.Type == 0 {
 			Type += "expense"
-			statistic += v.Total / balance.Expense * 100 * -1
 		}else{
 			Type += "income"
-			statistic += v.Total / balance.Expense * 100 
 		}
 
 		response := gin.H{
@@ -87,7 +84,6 @@ func GetListCategory(c *gin.Context) {
 			"category": v.Category,
 			"type":     Type,
 			"total":    v.Total,
-			"statistic(%)": statistic,
 		}
 
 		data = append(data, response)
